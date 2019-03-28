@@ -1,0 +1,65 @@
+name: mazifer
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^0.12.0
+  cupertino_icons: ^0.1.2
+  flutter_colorpicker: ^0.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+   - assets/images/logo.svg
+   
+   - assets/images/a.svg
+   - assets/images/b.svg
+   - assets/images/c.svg
+   - assets/images/d.svg
+   - assets/images/e.svg
+   - assets/images/f.svg
+   - assets/images/g.svg
+   - assets/images/h.svg
+   - assets/images/i.svg
+   - assets/images/j.svg
+   - assets/images/k.svg
+   - assets/images/l.svg
+   - assets/images/m.svg
+   - assets/images/n.svg
+   - assets/images/o.svg
+   - assets/images/p.svg
+   - assets/images/q.svg
+   - assets/images/r.svg
+   - assets/images/s.svg
+   - assets/images/t.svg
+   - assets/images/u.svg
+   - assets/images/v.svg
+   - assets/images/w.svg
+   - assets/images/x.svg
+   - assets/images/y.svg
+   - assets/images/z.svg
+   - assets/images/[.svg
+   - assets/images/].svg
+   - assets/images/+.svg
+
+  
+  fonts:
+    - family: Roboto Mono
+      fonts:
+        - asset: assets/fonts/RobotoMono-Regular.ttf
+        - asset: assets/fonts/RobotoMono-Light.ttf
+          weight: 300
+        - asset: assets/fonts/RobotoMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/RobotoMono-Bold.ttf
+          weight: 700
