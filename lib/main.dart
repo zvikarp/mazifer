@@ -18,16 +18,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
         cursorColor: Colors.grey[800],
+        fontFamily: 'Yanone',
         textTheme: TextTheme(
-          body1: TextStyle(
-            fontFamily: 'Roboto Mono',
-            fontSize: 18,
-          ),
-          body2: TextStyle(
-            fontFamily: 'Roboto Mono',
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          body1: TextStyle(fontSize: 22),
+          body2: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
       ),
       home: Mazifer(),
@@ -36,35 +30,21 @@ class MyApp extends StatelessWidget {
 }
 
 class Mazifer extends StatefulWidget {
-  Mazifer({Key key}) : super(key: key);
-
-  @override
   _MaziferState createState() => _MaziferState();
 }
 
 class _MaziferState extends State<Mazifer> {
-  final List<Color> colors = [
-    Color(0xff000000),
-    Color(0xffff5733),
-    Color(0xffc70039),
-    Color(0xff005792),
-    Color(0xff74b49b),
-    Color(0xff4a4a48),
-  ];
-  List<Color> selectedColors = [
-    Color(0xffff5733),
-    Color(0xff005792),
-  ];
-  final PageController pageCtr = PageController();
+  List<Color> colors = Colors.primaries;
+  List<Color> selectedColors = [Colors.red, Colors.indigo];
+  PageController pageCtr = PageController();
   double height = 200;
   String text = "";
   GlobalKey globalKey = GlobalKey();
 
   void _rebuildMaze(String input) {
-    String temp = input.replaceAll(" ", "+").toLowerCase();
-    setState(() {
-      text = temp == "" ? "" : "[" + temp + "]";
-    });
+    setState(() => text = "[" +
+        input.replaceAll(" ", "+").toLowerCase() +
+        "]".replaceAll("[]", ""));
   }
 
   void _zoom(ScaleUpdateDetails event) {
@@ -77,30 +57,28 @@ class _MaziferState extends State<Mazifer> {
 
   void nextCard() {
     pageCtr.nextPage(
-        duration: new Duration(milliseconds: 600), curve: Curves.easeIn);
+        duration: Duration(milliseconds: 600), curve: Curves.easeIn);
   }
 
   Widget card(List<Widget> children) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white70,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: children,
-        ),
+    return Container(
+      margin: EdgeInsets.all(16),
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white70,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: children,
       ),
     );
   }
 
   Widget colorSector(int color) {
     return Container(
-      height: 46.0,
+      height: 56.0,
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
@@ -108,14 +86,11 @@ class _MaziferState extends State<Mazifer> {
         itemBuilder: (context, i) {
           return GestureDetector(
             onTap: () {
-              setState(() {
-                selectedColors[color] = colors[i];
-              });
+              setState(() => selectedColors[color] = colors[i]);
               nextCard();
             },
             child: Container(
-              width: 30,
-              height: 30,
+              width: 40,
               margin: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
@@ -134,24 +109,6 @@ class _MaziferState extends State<Mazifer> {
     );
   }
 
-  List<Widget> welcome() {
-    return [
-      FlatButton(
-        onPressed: nextCard,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              "Get started",
-              style: Theme.of(context).textTheme.body2,
-            ),
-            Icon(Icons.navigate_next),
-          ],
-        ),
-      ),
-    ];
-  }
-
   List<Widget> setText() {
     return [
       Text("Entrer text to be mazified:"),
@@ -167,50 +124,79 @@ class _MaziferState extends State<Mazifer> {
           LengthLimitingTextInputFormatter(24),
           WhitelistingTextInputFormatter(RegExp("[a-z A-Z]")),
         ],
-        onSubmitted: (s) {
-          pageCtr.nextPage(
-              duration: new Duration(milliseconds: 600), curve: Curves.easeIn);
+        textInputAction: TextInputAction.next,
+        onEditingComplete: () {
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+          nextCard();
         },
       ),
     ];
   }
 
-  List<Widget> setMzColor() {
+  List<Widget> colorPicker(int step) {
     return [
-      Text("Set Maze Color:"),
-      colorSector(0),
+      Text(step == 2 ? "Set Maze Color:" : "Set Background Color:"),
+      colorSector(step - 2),
     ];
   }
 
-  List<Widget> setBgColor() {
-    return [
-      Text("Set Background Color:"),
-      colorSector(1),
-    ];
-  }
-
-  List<Widget> share() {
+  List<Widget> buttonCard(int step) {
     return [
       FlatButton(
-        onPressed: () async {
-          RenderRepaintBoundary boundary =
-              globalKey.currentContext.findRenderObject();
-          ui.Image image = await boundary.toImage(pixelRatio: 5.0);
-          ByteData bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-          await EsysFlutterShare.shareImage(
-              'myImageTest.png', bytes, 'my image title');
-        },
+        onPressed: step == 0 ? nextCard : share,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              "Share your maze!",
+              step == 0 ? "Get started" : "Share your maze",
               style: Theme.of(context).textTheme.body2,
             ),
+            Icon(step == 0 ? Icons.navigate_next : Icons.share),
           ],
         ),
       ),
     ];
+  }
+
+  void share() async {
+    RenderRepaintBoundary boundary =
+        globalKey.currentContext.findRenderObject();
+    ui.Image image = await boundary.toImage(pixelRatio: 5.0);
+    ByteData bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+    await EsysFlutterShare.shareImage('maze.png', bytes, '');
+  }
+
+  Widget maze() {
+    return Expanded(
+      child: GestureDetector(
+        onScaleUpdate: _zoom,
+        child: RepaintBoundary(
+          key: globalKey,
+          child: Container(
+            color: selectedColors[1],
+            child: CustomPaint(
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: text.length,
+                itemBuilder: (context, index) {
+                  return SvgPicture.asset(
+                      'assets/images/' + text[index] + '.svg',
+                      height: height,
+                      color: selectedColors[0]);
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget title() {
+    return card([
+      Text("Mazifer", style: Theme.of(context).textTheme.body2),
+    ]);
   }
 
   @override
@@ -223,56 +209,26 @@ class _MaziferState extends State<Mazifer> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              card([
-                Text(
-                  "Mayifer",
-                  style: Theme.of(context).textTheme.body2,
-                ),
-              ]),
-              Expanded(
-                child: GestureDetector(
-                  onScaleUpdate: _zoom,
-                  child: RepaintBoundary(
-                    key: globalKey,
-                    child: Container(
-                      color: selectedColors[1],
-                      child: CustomPaint(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: text.length,
-                          itemBuilder: (context, index) {
-                            return SvgPicture.asset(
-                                'assets/images/' + text[index] + '.svg',
-                                height: height,
-                                color: selectedColors[0]);
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            children: <Widget>[title(), maze()],
           ),
         ),
       ),
       bottomNavigationBar: Transform.translate(
-          offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            height: 120,
-            child: PageView(
-              controller: pageCtr,
-              children: <Widget>[
-                card(welcome()),
-                card(setText()),
-                card(setMzColor()),
-                card(setBgColor()),
-                card(share()),
-              ],
-            ),
-          )),
+        offset: Offset(0.0, -1 * MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          height: 130,
+          child: PageView(
+            controller: pageCtr,
+            children: [
+              buttonCard(0),
+              setText(),
+              colorPicker(2),
+              colorPicker(3),
+              buttonCard(4),
+            ].map((content) => card(content)).toList(),
+          ),
+        ),
+      ),
     );
   }
 }

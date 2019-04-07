@@ -61,3 +61,8 @@ flutter:
           weight: 500
         - asset: assets/fonts/RobotoMono-Bold.ttf
           weight: 700
+    - family: Yanone
+      fonts:
+        - asset: assets/fonts/YanoneKaffeesatz-Regular.ttf
+        - asset: assets/fonts/YanoneKaffeesatz-Light.ttf
+          weight: 300
