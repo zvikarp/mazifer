@@ -1,8 +1,9 @@
 name: mazifer
-description: A new Flutter project.
+description: A <5kb Flutter app that turns any word into a maze!
 
-version: 1.0.0+1
+author: Zvi Karp <zvi@zektec.com>
 
+version: 1.0.0
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
@@ -20,7 +21,7 @@ dev_dependencies:
     sdk: flutter
 
 flutter_icons:
-  android: "launcher_icon" 
+  android: "launcher_icon"
   ios: true
   image_path: "assets/icon/icon.png"
 
@@ -59,17 +60,6 @@ flutter:
 
   
   fonts:
-    - family: Roboto Mono
-      fonts:
-        - asset: assets/fonts/RobotoMono-Regular.ttf
-        - asset: assets/fonts/RobotoMono-Light.ttf
-          weight: 300
-        - asset: assets/fonts/RobotoMono-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/RobotoMono-Bold.ttf
-          weight: 700
     - family: Yanone
       fonts:
         - asset: assets/fonts/YanoneKaffeesatz-Regular.ttf
-        - asset: assets/fonts/YanoneKaffeesatz-Light.ttf
-          weight: 300

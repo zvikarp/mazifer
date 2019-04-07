@@ -69,6 +69,17 @@ done = false;
 });
 }
 
+void share() async {
+setState(() {
+height = 100;
+done = true;
+});
+RenderRepaintBoundary boundary = key.currentContext.findRenderObject();
+ui.Image img = await boundary.toImage(pixelRatio: 3);
+ByteData bytes = await img.toByteData(format: ui.ImageByteFormat.png);
+EsysFlutterShare.shareImage('m.png', bytes, '');
+}
+
 Widget card(List<Widget> children) {
 return Container(
 margin: EdgeInsets.all(16),
@@ -166,17 +177,6 @@ Icon(step == 0 ? Icons.navigate_next : Icons.share),
 ),
 ),
 ];
-}
-
-void share() async {
-setState(() {
-height = 100;
-done = true;
-});
-RenderRepaintBoundary boundary = key.currentContext.findRenderObject();
-ui.Image img = await boundary.toImage(pixelRatio: 3);
-ByteData bytes = await img.toByteData(format: ui.ImageByteFormat.png);
-EsysFlutterShare.shareImage('m.png', bytes, '');
 }
 
 Widget maze() {
